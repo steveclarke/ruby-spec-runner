@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
 import SpecRunnerConfig, { TerminalClear } from '../SpecRunnerConfig';
 import { cdCommands, cmdJoin, quote, remapPath, stringifyEnvs } from '../util';
 import SpecResultPresenter from '../SpecResultPresenter';
@@ -41,7 +43,24 @@ export class SpecRunner {
       await vscode.commands.executeCommand('workbench.action.files.save');
     }
 
+    const editor = vscode.window.activeTextEditor;
+    if (editor && editor.document.languageId !== 'ruby') {
+      console.log('SpecRunner: Active editor is not a Ruby file, but proceeding with run all specs anyway.');
+    }
+
     try {
+      if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
+        throw { name: 'NoWorkspaceError' };
+      }
+
+      const workspaceRoot = vscode.workspace.workspaceFolders[0].uri.fsPath;
+      const specPath = path.join(workspaceRoot, 'spec');
+      
+      if (!fs.existsSync(specPath) || !fs.statSync(specPath).isDirectory()) {
+        vscode.window.showErrorMessage('SpecRunner: Unable to run all specs. No spec directory found.');
+        return;
+      }
+
       const command = this.buildRspecCommand('spec/', false);
       this.runTerminalCommand(command);
     } catch (error: any) {
@@ -49,7 +68,8 @@ export class SpecRunner {
         console.error('SpecRunner: Unable to run all specs as no workspace is open.', error);
         vscode.window.showErrorMessage('SpecRunner: Unable to run all specs. It appears that no workspace is open.');
       } else {
-        throw error;
+        console.error('SpecRunner: Error running all specs', error);
+        vscode.window.showErrorMessage(`SpecRunner: Error running all specs: ${error.message || error}`);
       }
     }
   }
