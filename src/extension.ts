@@ -72,6 +72,12 @@ export function activate(context: vscode.ExtensionContext) {
   const specRunner = new SpecRunner(config, resultInterpreter.outputFilePath, resultPresenter);
   const minitestRunner = new MinitestRunner(config, minitestInterpreter.outputFilePath, resultPresenter);
 
+  // Create "Run All Specs" button with high priority so it appears first
+  const allSpecsRunnerButton = new AllSpecsRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3), config);
+  
+  // Initialize it immediately - this will check for spec directory and show the button if found
+  allSpecsRunnerButton.update();
+  
   const runRspecOrMinitestFile = vscode.commands.registerCommand(
     'ruby-spec-runner.runRspecOrMinitestFile',
     buildFileRunnerHandler(minitestRunner, specRunner, false)
@@ -117,7 +123,6 @@ export function activate(context: vscode.ExtensionContext) {
   const failedSpecRunnerButton = new FailedSpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1), config);
   const specRunnerButton = new SpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
   const specDebugButton = new SpecDebugButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
-  const allSpecsRunnerButton = new AllSpecsRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3), config);
   const minitestRunnerButton = new MinitestRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
 
   context.subscriptions.push(runRspecOrMinitestFile);
@@ -146,11 +151,10 @@ export function activate(context: vscode.ExtensionContext) {
     resultPresenter.update();
   }));
 
-
+  // Initialize all buttons
   failedSpecRunnerButton.update();
   specRunnerButton.update();
   specDebugButton.update();
-  allSpecsRunnerButton.update();
   minitestRunnerButton.update();
 }
 

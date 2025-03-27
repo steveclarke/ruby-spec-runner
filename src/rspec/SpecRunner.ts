@@ -39,15 +39,12 @@ export class SpecRunner {
   }
 
   async runAllExamples() {
-    if (this.config.saveBeforeRunning) {
+    // Save current editor if configured to do so and if there is an active editor
+    if (this.config.saveBeforeRunning && vscode.window.activeTextEditor) {
       await vscode.commands.executeCommand('workbench.action.files.save');
     }
 
-    const editor = vscode.window.activeTextEditor;
-    if (editor && editor.document.languageId !== 'ruby') {
-      console.log('SpecRunner: Active editor is not a Ruby file, but proceeding with run all specs anyway.');
-    }
-
+    // We don't need an active editor to run all specs
     try {
       if (!vscode.workspace.workspaceFolders || vscode.workspace.workspaceFolders.length === 0) {
         throw { name: 'NoWorkspaceError' };

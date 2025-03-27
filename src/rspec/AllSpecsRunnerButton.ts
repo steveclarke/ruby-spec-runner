@@ -13,11 +13,17 @@ export class AllSpecsRunnerButton {
     this.config = config;
 
     this.button.text = '$(play) Run all specs';
-    this.button.tooltip = 'Run all specs';
+    this.button.tooltip = 'Run all specs in the project';
     this.button.command = 'ruby-spec-runner.runAllExamples';
     
-    // Check if spec directory exists
+    // Check if spec directory exists initially
     this.checkForSpecDirectory();
+    
+    // Watch for workspace folder changes to update button visibility
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      this.checkForSpecDirectory();
+      this.update();
+    });
   }
 
   private checkForSpecDirectory(): void {
@@ -32,8 +38,8 @@ export class AllSpecsRunnerButton {
     this.hasSpecDirectory = fs.existsSync(specPath) && fs.statSync(specPath).isDirectory();
   }
 
-  update(editor = vscode.window.activeTextEditor) {
-    // Only show the button if we have a spec directory and the setting is enabled
+  update(editor?: vscode.TextEditor): void {
+    // Only depends on workspace having a spec directory, not on active editor
     if (this.config.rspecRunAllExamplesButton && this.hasSpecDirectory) {
       this.button.show();
     } else {
