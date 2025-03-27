@@ -36,6 +36,24 @@ export class SpecRunner {
     this.runCurrentSpec(true);
   }
 
+  async runAllExamples() {
+    if (this.config.saveBeforeRunning) {
+      await vscode.commands.executeCommand('workbench.action.files.save');
+    }
+
+    try {
+      const command = this.buildRspecCommand('spec/', false);
+      this.runTerminalCommand(command);
+    } catch (error: any) {
+      if (error?.name === 'NoWorkspaceError') {
+        console.error('SpecRunner: Unable to run all specs as no workspace is open.', error);
+        vscode.window.showErrorMessage('SpecRunner: Unable to run all specs. It appears that no workspace is open.');
+      } else {
+        throw error;
+      }
+    }
+  }
+
   async runSpecForFile(fileName: string, failedOnly: boolean, line?: number, testName?: string, debugging?: boolean) {
     try {
       if (debugging) {

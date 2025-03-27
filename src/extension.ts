@@ -3,7 +3,7 @@ import { SpecRunnerConfig } from './SpecRunnerConfig';
 import SpecResultInterpreter from './rspec/SpecResultInterpreter';
 import SpecResultPresenter from './SpecResultPresenter';
 import { MinitestRunner, MinitestRunnerCodeLensProvider, MinitestRunnerButton, MinitestResultInterpreter, MinitestParser } from './minitest';
-import { SpecRunner, SpecRunnerCodeLensProvider, FailedSpecRunnerButton, SpecRunnerButton, SpecDebugButton } from './rspec';
+import { SpecRunner, SpecRunnerCodeLensProvider, FailedSpecRunnerButton, SpecRunnerButton, SpecDebugButton, AllSpecsRunnerButton } from './rspec';
 import { RunRspecOrMinitestArg } from './types';
 
 const buildFileRunnerHandler = (minitestRunner: MinitestRunner, specRunner: SpecRunner, debugging: boolean) => async (args: any) => {
@@ -93,6 +93,10 @@ export function activate(context: vscode.ExtensionContext) {
     'ruby-spec-runner.runFailedExamples',
     async () => specRunner.runFailedExample()
   );
+  const runAllExamples = vscode.commands.registerCommand(
+    'ruby-spec-runner.runAllExamples',
+    async () => specRunner.runAllExamples()
+  );
   const clearResults = vscode.commands.registerCommand(
     'ruby-spec-runner.clearResults',
     async () => resultPresenter.clearTestResults()
@@ -113,6 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
   const failedSpecRunnerButton = new FailedSpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1), config);
   const specRunnerButton = new SpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
   const specDebugButton = new SpecDebugButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
+  const allSpecsRunnerButton = new AllSpecsRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0), config);
   const minitestRunnerButton = new MinitestRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
 
   context.subscriptions.push(runRspecOrMinitestFile);
@@ -121,16 +126,19 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(debugRspecLine);
   context.subscriptions.push(clearResults);
   context.subscriptions.push(runFailedExample);
+  context.subscriptions.push(runAllExamples);
   context.subscriptions.push(specCodeLensProviderDisposable);
   context.subscriptions.push(minitestCodeLensProviderDisposable);
   context.subscriptions.push(specRunnerButton.button);
   context.subscriptions.push(specDebugButton.button);
   context.subscriptions.push(failedSpecRunnerButton.button);
+  context.subscriptions.push(allSpecsRunnerButton.button);
   context.subscriptions.push(minitestRunnerButton.button);
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) => {
     failedSpecRunnerButton.update(editor);
     specRunnerButton.update(editor);
     specDebugButton.update(editor);
+    allSpecsRunnerButton.update(editor);
     minitestRunnerButton.update(editor);
     resultPresenter.update();
   }));
@@ -142,6 +150,7 @@ export function activate(context: vscode.ExtensionContext) {
   failedSpecRunnerButton.update();
   specRunnerButton.update();
   specDebugButton.update();
+  allSpecsRunnerButton.update();
   minitestRunnerButton.update();
 }
 

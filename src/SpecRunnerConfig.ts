@@ -92,6 +92,10 @@ export class SpecRunnerConfig {
     return this.getBooleanConfig('ruby-spec-runner.rspecRunAllFailedButton', false);
   }
 
+  get rspecRunAllExamplesButton(): boolean {
+    return this.getBooleanConfig('ruby-spec-runner.rspecRunAllExamplesButton', true);
+  }
+
   get minitestRunButton(): boolean {
     return this.getBooleanConfig('ruby-spec-runner.minitestRunButton', true);
   }

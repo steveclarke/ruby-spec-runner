@@ -48,6 +48,10 @@
 				"title": "Ruby Spec Runner: Re-run failed examples"
 			},
 			{
+				"command": "ruby-spec-runner.runAllExamples",
+				"title": "Ruby Spec Runner: Run all specs"
+			},
+			{
 				"command": "ruby-spec-runner.clearResults",
 				"title": "Ruby Spec Runner: Clear test results for this file"
 			}
@@ -151,6 +155,12 @@
 					"type": "boolean",
 					"default": false,
 					"description": "Rspec: Show a status bar button to re-run the failed examples for the current spec file",
+					"scope": "window"
+				},
+				"ruby-spec-runner.rspecRunAllExamplesButton": {
+					"type": "boolean",
+					"default": true,
+					"description": "Rspec: Show a status bar button to run all specs in the project",
 					"scope": "window"
 				},
 				"ruby-spec-runner.minitestRunButton": {
