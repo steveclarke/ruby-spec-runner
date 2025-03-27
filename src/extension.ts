@@ -117,7 +117,7 @@ export function activate(context: vscode.ExtensionContext) {
   const failedSpecRunnerButton = new FailedSpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 1), config);
   const specRunnerButton = new SpecRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
   const specDebugButton = new SpecDebugButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
-  const allSpecsRunnerButton = new AllSpecsRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 0), config);
+  const allSpecsRunnerButton = new AllSpecsRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 3), config);
   const minitestRunnerButton = new MinitestRunnerButton(vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 2), config);
 
   context.subscriptions.push(runRspecOrMinitestFile);
